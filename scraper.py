@@ -93,8 +93,8 @@ class LiveScoreScraper:
                     'prediction': f"{pred_home}-{pred_away}",
                     'hdp': random.choice(hdp_values),
                     'ou': random.choice(ou_values),
-                    'key_home': round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2),
-                    'key_away': round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
+                    'key_home': round(random.uniform(1.80, 2.30), 2),
+                    'key_away': round(random.uniform(1.80, 2.30), 2)
                 })
             except Exception as e:
                 continue
@@ -137,8 +137,8 @@ class LiveScoreScraper:
             match['hdp'] = random.choice(hdp_values)
             match['ou'] = random.choice(ou_values)
             # Add Key (Odds)
-            match['key_home'] = round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
-            match['key_away'] = round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
+            match['key_home'] = round(random.uniform(1.80, 2.30), 2)
+            match['key_away'] = round(random.uniform(1.80, 2.30), 2)
         
         return matches
 
