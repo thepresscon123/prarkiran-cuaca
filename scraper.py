@@ -84,8 +84,8 @@ class LiveScoreScraper:
                     'status': status,
                     'is_live': is_live,
                     'prediction': f"{pred_home}-{pred_away}",
-                    'hdp': round(random.uniform(-1.5, 1.5), 2),
-                    'ou': round(random.uniform(2.0, 3.5), 1)
+                    'hdp': random.choice([-1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75]),
+                    'ou': random.choice([1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5])
                 })
             except Exception as e:
                 continue
@@ -114,8 +114,8 @@ class LiveScoreScraper:
             
             # Add predictions
             match['prediction'] = f"{random.randint(0,3)}-{random.randint(0,2)}"
-            match['hdp'] = round(random.uniform(-1.5, 1.5), 2)
-            match['ou'] = round(random.uniform(2.0, 3.5), 1)
+            match['hdp'] = random.choice([-1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75])
+            match['ou'] = random.choice([1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5])
         
         return matches
 
