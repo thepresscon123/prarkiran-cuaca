@@ -49,12 +49,18 @@ class LiveScoreScraper:
         return None
     
     def _parse_sofascore(self, data):
-        """Parse SofaScore API response"""
+        """Parse SofaScore API response - FETCHING ALL MATCHES"""
         matches = []
-        events = data.get('events', [])[:15]  # Limit to 15 matches
+        events = data.get('events', [])  # Fetch ALL available matches for today
+        
+        # SBOBET format values
+        hdp_values = [-2.5, -2.25, -2.0, -1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5]
+        ou_values = [1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.25, 4.5]
         
         for event in events:
             try:
+                # Filter useful information
+                tournament = event.get('tournament', {}).get('name', 'Unknown League')
                 home_team = event.get('homeTeam', {}).get('name', 'Unknown')
                 away_team = event.get('awayTeam', {}).get('name', 'Unknown')
                 home_score = event.get('homeScore', {}).get('current', '-')
@@ -76,6 +82,7 @@ class LiveScoreScraper:
                 pred_away = random.randint(0, 2)
                 
                 matches.append({
+                    'league': tournament,
                     'home_team': home_team,
                     'away_team': away_team,
                     'home_score': home_score if home_score != '-' else None,
@@ -84,8 +91,10 @@ class LiveScoreScraper:
                     'status': status,
                     'is_live': is_live,
                     'prediction': f"{pred_home}-{pred_away}",
-                    'hdp': random.choice([-1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75]),
-                    'ou': random.choice([1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5])
+                    'hdp': random.choice(hdp_values),
+                    'ou': random.choice(ou_values),
+                    'key_home': round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2),
+                    'key_away': round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
                 })
             except Exception as e:
                 continue
@@ -93,29 +102,43 @@ class LiveScoreScraper:
         return matches if matches else None
     
     def _generate_mock_matches(self):
-        """Generate realistic mock match data"""
+        """Generate realistic mock match data with 20 matches for all sports feel"""
         now = datetime.now()
         
-        matches = [
-            {"home_team": "Arsenal", "away_team": "Liverpool", "time": "19:00", "status": "Scheduled", "is_live": False},
-            {"home_team": "Real Madrid", "away_team": "Atletico Madrid", "time": "21:30", "status": "Scheduled", "is_live": False},
-            {"home_team": "Barcelona", "away_team": "Sevilla", "time": f"{now.hour}:{now.minute:02d}", "status": "2nd half", "is_live": True, "home_score": 2, "away_score": 0},
-            {"home_team": "Man City", "away_team": "Chelsea", "time": "00:00", "status": "Scheduled", "is_live": False},
-            {"home_team": "Inter Milan", "away_team": "Juventus", "time": "02:45", "status": "Scheduled", "is_live": False},
-            {"home_team": "Bayern Munich", "away_team": "Dortmund", "time": "23:30", "status": "Scheduled", "is_live": False},
-            {"home_team": "PSG", "away_team": "Lyon", "time": "03:00", "status": "Scheduled", "is_live": False},
-            {"home_team": "Napoli", "away_team": "Lazio", "time": "20:00", "status": "1st half", "is_live": True, "home_score": 1, "away_score": 1},
+        hdp_values = [-2.5, -2.25, -2.0, -1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5]
+        ou_values = [1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.25, 4.5]
+        
+        team_pairs = [
+            ("Arsenal", "Liverpool"), ("Real Madrid", "Atletico Madrid"), ("Barcelona", "Sevilla"),
+            ("Man City", "Chelsea"), ("Inter Milan", "Juventus"), ("Bayern Munich", "Dortmund"),
+            ("PSG", "Lyon"), ("Napoli", "Lazio"), ("Leeds United", "Man United"), ("Tottenham", "Sunderland"),
+            ("Ajax", "PSV"), ("Porto", "Benfica"), ("Celtic", "Rangers"), ("Fenerbahce", "Galatasaray"),
+            ("Boca Juniors", "River Plate"), ("Flamengo", "Palmeiras"), ("Milan", "Roma"), ("Leverkusen", "Leipzig"),
+            ("Al Nassr", "Al Hilal"), ("Inter Miami", "LA Galaxy")
         ]
         
+        matches = []
+        for home, away in team_pairs:
+            is_live = random.random() < 0.2
+            matches.append({
+                "home_team": home,
+                "away_team": away,
+                "time": f"{random.randint(0,23):02d}:{random.randint(0,5)*10:02d}",
+                "status": "Scheduled" if not is_live else "1st half",
+                "is_live": is_live,
+                "home_score": random.randint(0, 2) if is_live else None,
+                "away_score": random.randint(0, 1) if is_live else None,
+                "league": random.choice(["Premier League", "La Liga", "Serie A", "Champions League", "International"])
+            })
+        
         for match in matches:
-            if 'home_score' not in match:
-                match['home_score'] = None
-                match['away_score'] = None
-            
-            # Add predictions
+            # Add predictions and SBOBET odds
             match['prediction'] = f"{random.randint(0,3)}-{random.randint(0,2)}"
-            match['hdp'] = random.choice([-1.75, -1.5, -1.25, -1.0, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75])
-            match['ou'] = random.choice([1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5])
+            match['hdp'] = random.choice(hdp_values)
+            match['ou'] = random.choice(ou_values)
+            # Add Key (Odds)
+            match['key_home'] = round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
+            match['key_away'] = round(random.uniform(0.85, 1.05), 2) if random.random() > 0.5 else -round(random.uniform(0.85, 1.05), 2)
         
         return matches
 

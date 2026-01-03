@@ -1,19 +1,15 @@
-"""
-Flask Server - API untuk menyediakan data live score
-"""
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from scraper import LiveScoreScraper
 import os
 
 app = Flask(__name__, static_folder='.')
-CORS(app)  # Allow cross-origin requests
+CORS(app)
 
 scraper = LiveScoreScraper()
 
 @app.route('/')
 def index():
-    """Serve the main website"""
     return send_from_directory('.', 'website_realtime.html')
 
 @app.route('/api/matches')
@@ -36,13 +32,13 @@ def get_matches():
 def get_stats():
     """API endpoint untuk statistik bot"""
     return jsonify({
+        'success': True,
         'win_rate': 87,
         'total_predictions': 1247,
         'vip_members': 152,
-        'win_streak': 9
+        'win_streak': '9/10'
     })
 
+# Untuk Vercel (harus ada variable 'app' di level global)
 if __name__ == '__main__':
-    print("Server running at http://localhost:5000")
-    print("API: http://localhost:5000/api/matches")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True, port=int(os.environ.get('PORT', 5000)))
