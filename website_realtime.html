@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAKIRAAN CUACA ⚽ - Live Scores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .logo span {
+            color: #fff;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            color: #00ff88;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 68, 68, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: #ff4444;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .main-content {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #0d2137;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .sidebar-title {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d5a87;
+        }
+
+        .league-item {
+            padding: 10px;
+            color: #8fa8c8;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .league-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #fff;
+        }
+
+        .match-container {
+            flex: 1;
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+            padding: 12px 15px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            color: #ffd700;
+            font-size: 16px;
+        }
+
+        .refresh-info {
+            color: #8fa8c8;
+            font-size: 12px;
+        }
+
+        .match-table {
+            background: #0d2137;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .match-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 120px 80px;
+            padding: 12px 15px;
+            border-bottom: 1px solid #1a3050;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .match-row:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .match-row.live {
+            background: rgba(255, 68, 68, 0.1);
+            border-left: 3px solid #ff4444;
+        }
+
+        .match-time {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .match-time.live {
+            color: #ff4444;
+        }
+
+        .match-teams {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-name {
+            color: #fff;
+        }
+
+        .team-score {
+            background: #1a3050;
+            color: #ffd700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .match-odds {
+            display: flex;
+            gap: 8px;
+        }
+
+        .odd-box {
+            background: #1a3050;
+            border: 1px solid #2d5a87;
+            padding: 6px 10px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 55px;
+        }
+
+        .odd-box:hover {
+            background: #ffd700;
+            color: #000;
+            border-color: #ffd700;
+        }
+
+        .odd-label {
+            font-size: 10px;
+            color: #8fa8c8;
+        }
+
+        .odd-value {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .prediction-badge {
+            background: linear-gradient(135deg, #ff6b00, #ff9500);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8fa8c8;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #1a3050;
+            border-top-color: #ffd700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .stats-panel {
+            background: #0d2137;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            color: #ffd700;
+            font-size: 28px;
+        }
+
+        .stat-box p {
+            color: #8fa8c8;
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #5a7a9a;
+            font-size: 12px;
+            border-top: 1px solid #1a3050;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">⚽ PRAKIRAAN <span>CUACA</span></div>
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span style="color:#ff4444; font-weight:bold;">LIVE</span>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">🎯 Win Rate: <span id="winRate">87</span>%</div>
+            <div class="stat-item">📊 Total: <span id="totalPred">1,247</span></div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <div class="sidebar-title">📁 LIGA POPULER</div>
+            <div class="league-item"><span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span> Premier League</div>
+            <div class="league-item"><span>🇪🇸</span> La Liga</div>
+            <div class="league-item"><span>🇮🇹</span> Serie A</div>
+            <div class="league-item"><span>🇩🇪</span> Bundesliga</div>
+            <div class="league-item"><span>🇫🇷</span> Ligue 1</div>
+            <div class="league-item"><span>🇪🇺</span> Champions League</div>
+        </div>
+
+        <div class="match-container">
+            <div class="section-header">
+                <span class="section-title">🔴 PERTANDINGAN HARI INI</span>
+                <span class="refresh-info">Auto-refresh: <span id="countdown">30</span>s</span>
+            </div>
+            <div class="match-table" id="matchTable">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Memuat data pertandingan...</p>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <h3 id="statWin">87%</h3>
+                        <p>Win Rate</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3 id="statTotal">1,247</h3>
+                        <p>Total Prediksi</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3 id="statVip">152</h3>
+                        <p>Member VIP</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3 id="statStreak">9/10</h3>
+                        <p>Win Streak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 Prakiraan Cuaca Sports | 🔄 Data diupdate setiap 30 detik
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let countdown = 30;
+
+        async function fetchMatches() {
+            try {
+                const response = await fetch(`${API_BASE}/api/matches`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    renderMatches(result.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch matches:', error);
+                document.getElementById('matchTable').innerHTML = `
+                    <div class="loading">
+                        <p style="color:#ff4444;">⚠️ Gagal memuat data. Pastikan server berjalan.</p>
+                        <p style="font-size:12px; margin-top:10px;">Jalankan: python server.py</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderMatches(matches) {
+            const table = document.getElementById('matchTable');
+            let html = '';
+
+            matches.forEach(match => {
+                const isLive = match.is_live;
+                const timeClass = isLive ? 'live' : '';
+                const rowClass = isLive ? 'live' : '';
+                const timeDisplay = isLive ? `🔴 ${match.status}` : match.time;
+
+                html += `
+                    <div class="match-row ${rowClass}">
+                        <div class="match-time ${timeClass}">${timeDisplay}</div>
+                        <div class="match-teams">
+                            <div class="team">
+                                <span class="team-name">${match.home_team}</span>
+                                ${match.home_score !== null ? `<span class="team-score">${match.home_score}</span>` : ''}
+                            </div>
+                            <div class="team">
+                                <span class="team-name">${match.away_team}</span>
+                                ${match.away_score !== null ? `<span class="team-score">${match.away_score}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="match-odds">
+                            <div class="odd-box">
+                                <div class="odd-label">HDP</div>
+                                <div class="odd-value">${match.hdp > 0 ? '+' : ''}${match.hdp}</div>
+                            </div>
+                            <div class="odd-box">
+                                <div class="odd-label">O/U</div>
+                                <div class="odd-value">${match.ou}</div>
+                            </div>
+                        </div>
+                        <div class="prediction-badge">${match.prediction}</div>
+                    </div>
+                `;
+            });
+
+            table.innerHTML = html;
+        }
+
+        function updateCountdown() {
+            countdown--;
+            document.getElementById('countdown').textContent = countdown;
+
+            if (countdown <= 0) {
+                countdown = 30;
+                fetchMatches();
+            }
+        }
+
+        // Initial load
+        fetchMatches();
+
+        // Auto-refresh every second (countdown), fetch every 30s
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+
+</html>

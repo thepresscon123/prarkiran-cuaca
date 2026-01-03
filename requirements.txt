@@ -1,0 +1,9 @@
+python-telegram-bot
+python-dotenv
+pillow
+flask
+flask-cors
+requests
+beautifulsoup4
+lxml
+gunicorn

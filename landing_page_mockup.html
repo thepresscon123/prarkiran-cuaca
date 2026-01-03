@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRAKIRAAN CUACA ⚽ - Sports Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #ffd700;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .logo span {
+            color: #fff;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            color: #00ff88;
+        }
+
+        /* NAV TABS */
+        .nav-tabs {
+            background: #0d2137;
+            display: flex;
+            border-bottom: 1px solid #2d5a87;
+        }
+
+        .nav-tab {
+            padding: 12px 25px;
+            color: #8fa8c8;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+            border-bottom-color: #ffd700;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #0d2137;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .sidebar-title {
+            color: #ffd700;
+            font-size: 14px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2d5a87;
+        }
+
+        .league-item {
+            padding: 10px;
+            color: #8fa8c8;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .league-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            color: #fff;
+        }
+
+        .league-flag {
+            font-size: 18px;
+        }
+
+        /* MATCH LIST */
+        .match-container {
+            flex: 1;
+        }
+
+        .section-header {
+            background: linear-gradient(90deg, #1e3a5f 0%, #2d5a87 100%);
+            padding: 12px 15px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            color: #ffd700;
+            font-size: 16px;
+        }
+
+        .live-badge {
+            background: #ff4444;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .match-table {
+            background: #0d2137;
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+        }
+
+        .match-row {
+            display: grid;
+            grid-template-columns: 80px 1fr 100px 80px;
+            padding: 12px 15px;
+            border-bottom: 1px solid #1a3050;
+            align-items: center;
+            transition: background 0.2s;
+        }
+
+        .match-row:hover {
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .match-time {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .match-time.live {
+            color: #ff4444;
+        }
+
+        .match-teams {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .team-name {
+            color: #fff;
+        }
+
+        .team-score {
+            background: #1a3050;
+            color: #ffd700;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .match-odds {
+            display: flex;
+            gap: 8px;
+        }
+
+        .odd-box {
+            background: #1a3050;
+            border: 1px solid #2d5a87;
+            padding: 8px 12px;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .odd-box:hover {
+            background: #ffd700;
+            color: #000;
+            border-color: #ffd700;
+        }
+
+        .odd-label {
+            font-size: 10px;
+            color: #8fa8c8;
+        }
+
+        .odd-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .prediction-badge {
+            background: linear-gradient(135deg, #ff6b00, #ff9500);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #5a7a9a;
+            font-size: 12px;
+            border-top: 1px solid #1a3050;
+            margin-top: 30px;
+        }
+
+        /* STATS PANEL */
+        .stats-panel {
+            background: #0d2137;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-box h3 {
+            color: #ffd700;
+            font-size: 28px;
+        }
+
+        .stat-box p {
+            color: #8fa8c8;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <div class="logo">⚽ PRAKIRAAN <span>CUACA</span></div>
+        <div class="header-stats">
+            <div class="stat-item">🎯 Win Rate: 87%</div>
+            <div class="stat-item">📊 Total Prediksi: 1,247</div>
+        </div>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active">⚽ Sepak Bola</div>
+        <div class="nav-tab">🏀 Basket</div>
+        <div class="nav-tab">🎾 Tenis</div>
+        <div class="nav-tab">📊 Statistik</div>
+        <div class="nav-tab">💎 VIP</div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <div class="sidebar-title">📁 LIGA POPULER</div>
+            <div class="league-item"><span class="league-flag">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span> Premier League</div>
+            <div class="league-item"><span class="league-flag">🇪🇸</span> La Liga</div>
+            <div class="league-item"><span class="league-flag">🇮🇹</span> Serie A</div>
+            <div class="league-item"><span class="league-flag">🇩🇪</span> Bundesliga</div>
+            <div class="league-item"><span class="league-flag">🇫🇷</span> Ligue 1</div>
+            <div class="league-item"><span class="league-flag">🇪🇺</span> Champions League</div>
+        </div>
+
+        <div class="match-container">
+            <div class="section-header">
+                <span class="section-title">🔴 PERTANDINGAN HARI INI - Sabtu, 4 Jan 2026</span>
+                <span class="live-badge">● 3 LIVE</span>
+            </div>
+            <div class="match-table">
+                <!-- LIVE MATCH -->
+                <div class="match-row">
+                    <div class="match-time live">🔴 45'</div>
+                    <div class="match-teams">
+                        <div class="team"><span class="team-name">Barcelona</span> <span class="team-score">2</span>
+                        </div>
+                        <div class="team"><span class="team-name">Sevilla</span> <span class="team-score">0</span></div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odd-box">
+                            <div class="odd-label">HDP</div>
+                            <div class="odd-value">-1.5</div>
+                        </div>
+                        <div class="odd-box">
+                            <div class="odd-label">O/U</div>
+                            <div class="odd-value">O 3.5</div>
+                        </div>
+                    </div>
+                    <div class="prediction-badge">3-1 ✓</div>
+                </div>
+
+                <!-- UPCOMING -->
+                <div class="match-row">
+                    <div class="match-time">19:00</div>
+                    <div class="match-teams">
+                        <div class="team"><span class="team-name">Arsenal</span></div>
+                        <div class="team"><span class="team-name">Liverpool</span></div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odd-box">
+                            <div class="odd-label">HDP</div>
+                            <div class="odd-value">0.0</div>
+                        </div>
+                        <div class="odd-box">
+                            <div class="odd-label">O/U</div>
+                            <div class="odd-value">O 2.5</div>
+                        </div>
+                    </div>
+                    <div class="prediction-badge">2-1</div>
+                </div>
+
+                <div class="match-row">
+                    <div class="match-time">21:30</div>
+                    <div class="match-teams">
+                        <div class="team"><span class="team-name">Real Madrid</span></div>
+                        <div class="team"><span class="team-name">Atletico Madrid</span></div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odd-box">
+                            <div class="odd-label">HDP</div>
+                            <div class="odd-value">-0.75</div>
+                        </div>
+                        <div class="odd-box">
+                            <div class="odd-label">O/U</div>
+                            <div class="odd-value">U 2.5</div>
+                        </div>
+                    </div>
+                    <div class="prediction-badge">2-0</div>
+                </div>
+
+                <div class="match-row">
+                    <div class="match-time">00:00</div>
+                    <div class="match-teams">
+                        <div class="team"><span class="team-name">Man City</span></div>
+                        <div class="team"><span class="team-name">Chelsea</span></div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odd-box">
+                            <div class="odd-label">HDP</div>
+                            <div class="odd-value">-1.0</div>
+                        </div>
+                        <div class="odd-box">
+                            <div class="odd-label">O/U</div>
+                            <div class="odd-value">O 3.5</div>
+                        </div>
+                    </div>
+                    <div class="prediction-badge">3-1</div>
+                </div>
+
+                <div class="match-row">
+                    <div class="match-time">02:45</div>
+                    <div class="match-teams">
+                        <div class="team"><span class="team-name">Inter Milan</span></div>
+                        <div class="team"><span class="team-name">Juventus</span></div>
+                    </div>
+                    <div class="match-odds">
+                        <div class="odd-box">
+                            <div class="odd-label">HDP</div>
+                            <div class="odd-value">-0.25</div>
+                        </div>
+                        <div class="odd-box">
+                            <div class="odd-label">O/U</div>
+                            <div class="odd-value">U 2.5</div>
+                        </div>
+                    </div>
+                    <div class="prediction-badge">1-1</div>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <h3>87%</h3>
+                        <p>Win Rate</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>1,247</h3>
+                        <p>Total Prediksi</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>152</h3>
+                        <p>Member VIP</p>
+                    </div>
+                    <div class="stat-box">
+                        <h3>9/10</h3>
+                        <p>Win Streak</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2026 Prakiraan Cuaca Sports. Prediksi adalah untuk hiburan. 18+ Only.
+    </div>
+
+</body>
+
+</html>
